@@ -18,7 +18,7 @@ class TelemetryData(models.Model):
     session_type = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.team} - {self.driver_name}"
+        return f"{self.driver_name}: {self.circuit_name} - {self.lap}"
 
     class Meta:
         indexes = [      
@@ -35,5 +35,7 @@ class EventLog(models.Model):
     description = models.TextField(blank=True)
     created_at =  models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.id}"
     class Meta:
         ordering = ["-created_at"]
