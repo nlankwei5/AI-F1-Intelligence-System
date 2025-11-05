@@ -11,6 +11,7 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 
 class TelemetryDataViewset(viewsets.ReadOnlyModelViewSet):
     queryset = TelemetryData.objects.all().order_by('-time')
+    # permission_classes = [YourCustomApiKeyPermission]
     serializer_class = TelemetryDataSerializer
     filter_backends = [SearchFilter, OrderingFilter]
     search_fields = ['driver_name', 'team', 'circuit_name']
