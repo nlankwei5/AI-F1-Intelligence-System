@@ -20,5 +20,5 @@ class TelemetryDataViewset(viewsets.ReadOnlyModelViewSet):
 class EventLogViewset(viewsets.ModelViewSet):
     queryset = EventLog.objects.all()
     serializer_class = EventLogSerializer
-
+    lookup_field = 'id'
 
