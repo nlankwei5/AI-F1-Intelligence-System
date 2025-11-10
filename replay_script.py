@@ -5,8 +5,6 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
-fastf1.Cache.enable_cache('fastf1_cache')
-
 def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
     session = fastf1.get_session(year, gp, 'R')
     session.load()
