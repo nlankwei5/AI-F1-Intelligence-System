@@ -12,10 +12,13 @@ django-filter==25.2
 django-restframework==0.0.1
 djangorestframework==3.16.1
 kombu==5.5.4
+numpy==2.3.4
 packaging==25.0
+pandas==2.3.3
 prompt_toolkit==3.0.52
 psycopg2==2.9.11
 python-dateutil==2.9.0.post0
+pytz==2025.2
 redis==7.0.1
 six==1.17.0
 sqlparse==0.5.3
