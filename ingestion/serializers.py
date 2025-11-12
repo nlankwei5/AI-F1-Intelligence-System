@@ -10,6 +10,11 @@ class TelemetryDataSerializer(serializers.ModelSerializer):
         read_only_fields= ['time']
 
 
+class SimpleTelemetryDataSerializer(serializers.ModelSerializer):
+    class Meta: 
+        model = TelemetryData
+        fields = ['driver_name', 'circuit_name', 'lap']
+
 
 class EventLogSerializer(serializers.ModelSerializer):
     class Meta: 
