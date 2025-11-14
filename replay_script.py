@@ -11,6 +11,7 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
     session = fastf1.get_session(year, gp, 'R')
     session.load()
     driver_laps = session.laps.pick_driver(driver)
+    weather_info = session.weather_data[['Rainfall']]
     
     race_start_time = datetime.now()
     
@@ -41,6 +42,8 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
                 throttle=float(telem_row['Throttle']) if pd.notna(telem_row['Throttle']) else 0.0,
                 brake=float(telem_row['Brake']) if pd.notna(telem_row['Brake']) else 0.0,
                 gear=int(telem_row['nGear']) if pd.notna(telem_row['nGear']) else 0,
+                tyre = driver_laps[['LapNumber', 'Compound']],
+                weather = weather_info,
                 rpm=int(telem_row['RPM']) if pd.notna(telem_row['RPM']) else 0,
                 drs=bool(telem_row['DRS']) if pd.notna(telem_row['DRS']) else False,
                 session_type='R',

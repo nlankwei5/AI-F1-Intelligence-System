@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from ingestion.urls import router as ingestion_router
+from analytics.urls import router as analytics_router
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include(ingestion_router.urls)),
+    path('api/v1/', include(analytics_router.urls)),
 ]

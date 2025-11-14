@@ -14,6 +14,8 @@ class TelemetryData(models.Model):
     gear = models.IntegerField(default=0)
     rpm = models.IntegerField(default=0)
     drs = models.BooleanField(default=False)
+    tyre = models.CharField(max_length=50, null=True)
+    weather = models.BooleanField(default=False)
     time = models.DateTimeField(auto_now_add=True)
     session_type = models.CharField(max_length=100, blank=True,  null =True)
     session_id = models.CharField(max_length=100, blank=True, null=True)
