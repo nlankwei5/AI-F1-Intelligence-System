@@ -15,6 +15,8 @@ class TelemetryAdmin(admin.ModelAdmin):
         'gear',
         'rpm',
         'drs',
+        'weather', 
+        'tyre',
         'session_type',
         'session_id'
     ]
