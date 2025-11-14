@@ -1,6 +1,6 @@
 from openai import OpenAI
 
-client = OpenAI(api_key="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")
+client = OpenAI(api_key="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")
 
 def analyze_with_gpt(prompt):
     """

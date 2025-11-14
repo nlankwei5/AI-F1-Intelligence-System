@@ -3,6 +3,7 @@ from ingestion.models import TelemetryData
 import pandas as pd
 import time
 from datetime import datetime, timedelta
+from analytics.tasks import analyze_lap_telemetry
 
 
 fastf1.Cache.enable_cache('fastf1_cache')
@@ -68,6 +69,16 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
         # Save to DB
         if telemetry_objects:
             TelemetryData.objects.bulk_create(telemetry_objects, batch_size=500)
+
+            saved_telemetry = TelemetryData.objects.filter(
+                session_id=f"{year}_{gp}_R",
+                driver_name=str(lap['Driver']),
+                lap=lap_number
+            ).first()
+            
+            if saved_telemetry:
+                # Call the analysis task synchronously (waits for completion)
+                analyze_lap_telemetry(saved_telemetry.id)
             
             elapsed_time = (datetime.now() - race_start_time).total_seconds()
             print(f"✅ Lap {lap_number} complete! ({len(telemetry_objects)} points) | Race time: {elapsed_time:.1f}s\n")

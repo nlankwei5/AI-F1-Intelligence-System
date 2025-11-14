@@ -4,8 +4,8 @@ from .models import analytics_and_prediction
 from .services import analyze_with_gpt
 
 @shared_task
-def analyze_lap_telemetry(lap_id):
-    telemetry = TelemetryData.objects.get(id=lap_id)
+def analyze_lap_telemetry(telemetry_id):
+    telemetry = TelemetryData.objects.get(id=telemetry_id)
     
     # Create or fetch an analysis record
     analysis, _ = analytics_and_prediction.objects.get_or_create(telemetry=telemetry)
@@ -17,20 +17,18 @@ def analyze_lap_telemetry(lap_id):
             f"Driver: {telemetry.driver_name}\n"
             f"Lap {telemetry.lap}\n"
             f"Speed: {telemetry.speed} km/h\n"
-            f"RPM: {telemetry.rpm} km/h\n"
+            f"RPM: {telemetry.rpm}\n"  
             f"Throttle: {telemetry.throttle}%\n"
             f"Brake: {telemetry.brake}%\n"
-            f"Time: {telemetry.time}%\n"
-            f"Gear: {telemetry.gear}%\n"
-            f"Tyre: {telemetry.tyre}%\n"
-            f"Weather {telemetry.weather}%\n"
-            f"DRS {telemetry.drs}%\n"
+            f"Gear: {telemetry.gear}\n"  
+            f"Tyre: {telemetry.tyre}\n" 
+            f"Weather: {telemetry.weather}\n"  
+            f"DRS: {telemetry.drs}\n"  
         )
 
-        # Call OpenAI or another model for analysis
         prompt = (
-            "Be a senior telemtry engineer in a pit wall and Analyze the following telemetry data and provide insight and predictions into "
-            "driver performance and possible improvements:\n\n" + summary
+            "You are a senior telemetry engineer on the pit wall. "
+            "Analyze the following telemetry data and provide insights and predictions:\n\n" + summary
         )
 
         ai_response = analyze_with_gpt(prompt)
@@ -39,8 +37,11 @@ def analyze_lap_telemetry(lap_id):
         analysis.ai_response = ai_response
         analysis.status = 'complete'
         analysis.save()
+        
+        print(f"✅ Analysis complete for {telemetry.driver_name} lap {telemetry.lap}")
 
     except Exception as e:
+        print(f"❌ Analysis error: {e}")
         analysis.status = 'error'
         analysis.ai_response = str(e)
         analysis.save()
