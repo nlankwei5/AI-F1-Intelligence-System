@@ -11,7 +11,7 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
     session = fastf1.get_session(year, gp, 'R')
     session.load()
     driver_laps = session.laps.pick_driver(driver)
-    weather_info = session.weather_data[['Rainfall']]
+    
     
     race_start_time = datetime.now()
     
@@ -29,7 +29,21 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
         
         # Sample telemetry
         sampled_telemetry = telemetry.iloc[::10]
-        
+
+        lap_compound = str(lap['Compound']) if pd.notna(lap['Compound']) else 'UNKNOWN'
+            
+        # FIXED: Handle weather data properly
+        try:
+            if not session.weather_data.empty:
+                rainfall_value = session.weather_data['Rainfall'].iloc[0]
+                # Convert to float safely
+                rainfall = float(rainfall_value) if pd.notna(rainfall_value) else 0.0
+            else:
+                rainfall = 0.0
+        except (KeyError, IndexError, AttributeError) as e:
+            print(f"⚠️  Weather data unavailable: {e}")
+            rainfall = 0.0 
+
         # Build objects
         telemetry_objects = []
         for telem_idx, telem_row in sampled_telemetry.iterrows():
@@ -42,8 +56,8 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
                 throttle=float(telem_row['Throttle']) if pd.notna(telem_row['Throttle']) else 0.0,
                 brake=float(telem_row['Brake']) if pd.notna(telem_row['Brake']) else 0.0,
                 gear=int(telem_row['nGear']) if pd.notna(telem_row['nGear']) else 0,
-                tyre = driver_laps[['LapNumber', 'Compound']],
-                weather = weather_info,
+                tyre = lap_compound,
+                weather = rainfall,
                 rpm=int(telem_row['RPM']) if pd.notna(telem_row['RPM']) else 0,
                 drs=bool(telem_row['DRS']) if pd.notna(telem_row['DRS']) else False,
                 session_type='R',
