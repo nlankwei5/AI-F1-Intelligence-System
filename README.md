@@ -7,7 +7,7 @@ ApexFlow is a backend platform inspired by Formula 1 race intelligence. It captu
 ## 🚀 What it does
 
 - **Telemetry Ingestion:** Build with **FastF1** to simulate or stream F1 race data.  
-- **Asynchronous & Stream Processing:** Powered by **Celery** and **Faust** for scalable, real‑time data handling.  
+- **Asynchronous & Stream Processing:** Powered by **Celery** and **Faust**(future) for scalable, real‑time data handling. 
 - **AI-Powered Analytics:** Use **OpenAI** models to generate performance summaries, anomaly detection, and strategic insight.  
 - **Scalable Architecture:** Designed to scale beyond F1 — suitable for finance, logistics, manufacturing, or energy telemetry systems.  
 - **Future Visualization:** Plans include dashboards via **Grafana** (engineering) and **Power BI** (executive).
@@ -20,7 +20,7 @@ ApexFlow is a backend platform inspired by Formula 1 race intelligence. It captu
    Handle simulated or live F1 data with low latency and high fidelity.  
 2. **Robust Processing Pipelines**  
    - Celery: background tasks, replay orchestration, AI jobs  
-   - Faust: streaming pipeline for instant event detection  
+   - Faust: streaming pipeline for instant event detection (Faust)
 3. **AI Insights**  
    Leverage OpenAI to create driver performance summaries, detect outliers, and generate alerts.  
 4. **Future Visualization (Planned)**  
@@ -35,7 +35,7 @@ ApexFlow is a backend platform inspired by Formula 1 race intelligence. It captu
 
 - **Backend:** Django  
 - **Task Queue:** Celery  
-- **Stream Processing:** Faust  
+- **Stream Processing:** Faust (Future)  
 - **Telemetry Source:** FastF1  
 - **Database:** PostgreSQL  
 - **AI Analytics:** OpenAI  
@@ -72,7 +72,8 @@ Formula 1 is the ultimate telemetry exercise — cars generate massive data stre
 ## 🧠 Contributing
 
 Contributions are welcome!  
-- Add new telemetry adapters  
+- Add new telemetry adapters
+- Add Faust for real-time streaming  
 - Extend AI insight logic  
 - Build UI dashboards  
 - Improve performance or fault tolerance  
