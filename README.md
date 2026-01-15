@@ -22,7 +22,7 @@ ApexFlow is a backend platform inspired by Formula 1 race intelligence. It captu
    - Celery: background tasks, replay orchestration, AI jobs  
    - Faust: streaming pipeline for instant event detection (Faust)
 3. **AI Insights**  
-   Leverage OpenAI to create driver performance summaries, detect outliers, and generate alerts.  
+   Leverage LocalAI to create driver performance summaries, detect outliers, and generate alerts.  
 4. **Future Visualization (Planned)**  
    - Grafana: for real-time, technical dashboards  
    - Power BI: for business dashboards and executive reporting  
@@ -38,7 +38,7 @@ ApexFlow is a backend platform inspired by Formula 1 race intelligence. It captu
 - **Stream Processing:** Faust (Future)  
 - **Telemetry Source:** FastF1  
 - **Database:** PostgreSQL  
-- **AI Analytics:** OpenAI  
+- **AI Analytics:** LocalAI
 - **Visualization (future):** Grafana, Power BI  
 
 ---
