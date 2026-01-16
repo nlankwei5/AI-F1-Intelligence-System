@@ -50,11 +50,11 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0,  kaf
         lap_time = lap['LapTime'].total_seconds() if pd.notna(lap['LapTime']) else 90
         wait_time = lap_time * speed_multiplier 
         print(f"⏳ Lap {lap_number} completing in {wait_time:.1f}s (actual: {lap_time:.1f}s)...")
-        time.sleep(wait_time)
+        
         telemetry = lap.get_telemetry()
         
         if telemetry is None or telemetry.empty:
-            print(f"⚠️  No telemetry for lap {lap_number}")
+            print(f" No telemetry for lap {lap_number}")
             continue
         
         # Sample telemetry
@@ -71,7 +71,7 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0,  kaf
             else:
                 rainfall = 0.0
         except (KeyError, IndexError, AttributeError) as e:
-            print(f"⚠️  Weather data unavailable: {e}")
+            print(f"Weather data unavailable: {e}")
             rainfall = 0.0 
 
         # Build objects
@@ -100,10 +100,23 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0,  kaf
         telemetry_dict = [obj.__dict__ for obj in telemetry_objects]
 
         
+        num_points = len(telemetry_dict)
+        point_delay = wait_time / num_points if num_points > 0 else 0
+        
+        print(f" Lap {lap_number} starting - streaming {num_points} points over {wait_time:.1f}s...")
+        
 
-        # Send to kafka_consumer 
-      
-        send_telemetry_to_kafka(producer, kafka_topic, telemetry_dict)
+        for point_index, single_point in enumerate(telemetry_dict):
+            # Create unique key for ordering
+            message_key = f"{driver}_lap{lap_number}_point{point_index}"
+            
+            # Send single point
+            send_telemetry_to_kafka(producer, kafka_topic, single_point, key=message_key)
+            
+            # Wait before next point (simulates live data stream)
+            time.sleep(point_delay)
+        
+        print(f" Lap {lap_number} complete - sent {num_points} telemetry points")
     
     total_time = (datetime.now() - race_start_time).total_seconds()
     print(f"🏁 Race simulation complete! Total time: {total_time/60:.1f} minutes")
