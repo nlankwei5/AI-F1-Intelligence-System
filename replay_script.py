@@ -3,12 +3,41 @@ from ingestion.models import TelemetryData
 import pandas as pd
 import time
 from datetime import datetime, timedelta
-from analytics.tasks import analyze_lap_telemetry
+import json
+from kafka import KafkaProducer
 
 
 fastf1.Cache.enable_cache('fastf1_cache')
 
-def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
+
+
+def create_kafka_producer(bootstrap_servers='localhost:9092'):
+    '''
+    Initialize Kafka producer
+    '''
+    
+    producer = KafkaProducer(
+        bootstrap_servers=bootstrap_servers,
+        value_serializer=lambda v: json.dumps(v).encode('utf-8')
+    )
+    return producer
+
+def send_telemetry_to_kafka(producer, topic, telemetry_data, key=None):
+    '''
+    Send telemetry data to Kafka topic
+    '''
+    producer.send(topic, telemetry_data, key=key)
+    producer.flush()
+    return True
+
+
+
+
+
+def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0,  kafka_bootstrap_servers='localhost:9092',
+                            kafka_topic='telemetry_topic'):
+    producer = create_kafka_producer(kafka_bootstrap_servers)
+    
     session = fastf1.get_session(year, gp, 'R')
     session.load()
     driver_laps = session.laps.pick_driver(driver)
@@ -66,22 +95,15 @@ def simulate_live_race_simple(year, gp, driver='VER', speed_multiplier=1.0):
             )
             telemetry_objects.append(telemetry_obj)
         
-        # Save to DB
-        if telemetry_objects:
-            TelemetryData.objects.bulk_create(telemetry_objects, batch_size=500)
+        
+        
+        telemetry_dict = [obj.__dict__ for obj in telemetry_objects]
 
-            saved_telemetry = TelemetryData.objects.filter(
-                session_id=f"{year}_{gp}_R",
-                driver_name=str(lap['Driver']),
-                lap=lap_number
-            ).first()
-            
-            if saved_telemetry:
-                # Call the analysis task synchronously (waits for completion)
-                analyze_lap_telemetry(saved_telemetry.id)
-            
-            elapsed_time = (datetime.now() - race_start_time).total_seconds()
-            print(f"✅ Lap {lap_number} complete! ({len(telemetry_objects)} points) | Race time: {elapsed_time:.1f}s\n")
+        
+
+        # Send to kafka_consumer 
+      
+        send_telemetry_to_kafka(producer, kafka_topic, telemetry_dict)
     
     total_time = (datetime.now() - race_start_time).total_seconds()
     print(f"🏁 Race simulation complete! Total time: {total_time/60:.1f} minutes")
